@@ -1,4 +1,9 @@
 //input的线太长了，用这句话设定成占总页面长度的三分之一
 .sign-in{
     width: 30%;
+    display: flex;
+    flex-direction:column ;
+}
+.title{
+    margin: 10px 0;
 }
