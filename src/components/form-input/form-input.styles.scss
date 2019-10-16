@@ -1,0 +1,55 @@
+//此处就是把颜色定义给变量，后面随时替代就是了
+$sub-color: grey;
+$main-color: black;
+//此处的mixin也是同样效果， 把下面的子组件全部包括起来，然后要用shrinklabel的时候直接调用就可以了
+@mixin shrinkLabel {
+  top: -14px; //往上抬14px
+  font-size: 12px; //字体缩小
+  color: $main-color; //颜色改变
+}
+
+.group {
+  position: relative;
+  margin: 45px 0;
+
+  .form-input {
+    background: none;
+    background-color: white;
+    color: $sub-color;
+    font-size: 18px;
+    padding: 10px 10px 10px 5px;
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid $sub-color;
+    margin: 25px 0;
+
+    &:focus {
+      outline: none;
+    }
+//这边的focus就是我把鼠标点上输入栏的时候，执行shrink函数，不然的话点上去没反应，只有开始打字了才会产生shrink的效果
+    &:focus ~ .form-input-label {
+      @include shrinkLabel();
+    }
+  }
+
+  input[type='password'] {
+    letter-spacing: 0.3em;
+  }
+
+  .form-input-label {
+    color: $sub-color;
+    font-size: 16px;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 10px;
+    transition: 300ms ease all; //trasition key word让变化不会立刻发生，而是渐渐发生，这边是让shrink慢慢发生
+
+    &.shrink {
+      @include shrinkLabel();
+    }
+  }
+}
