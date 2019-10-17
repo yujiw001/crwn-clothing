@@ -15,6 +15,33 @@ const config = {
     measurementId: "G-1FLVMEXNGQ"
 };
 
+export const createUserProfileDocument = async(userAuth,additionalData) =>{
+    if(!userAuth) return;
+    //这两句话可以用来判断括号里的东西是否已经存在于数据库中了 await是异步相关的语法
+    const userRef = firestore.doc(`user/${userAuth.uid}` );
+    const snapShot= await userRef.get();
+    //我们要存入的数据有，名字，地址，还有具体什么是什么时候创建的
+    if(!snapShot.exists){
+        const {displayName,email} = userAuth;
+        const createdAt= new Date();
+
+        try{
+            await userRef.set({
+                displayName,
+                email,
+                createdAt,
+                ...additionalData
+            })
+        } catch(error){
+            console.log('error creating user',error.message);
+        }
+    }
+    //we want the userRef return because we need to use it to check if our database hase been updated
+    return userRef;
+}
+
+
+
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
