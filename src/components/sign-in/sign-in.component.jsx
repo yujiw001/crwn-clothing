@@ -2,7 +2,7 @@ import React from 'react';
 import FormInput from '../form-input/form-input.component.jsx'
 import './sign-in.styles.scss';
 import CustomButton from '../custom-button/custom-button.component.jsx'
-import { SignInWithGoogle } from '../../firebase/firebase.utils'
+import {auth, SignInWithGoogle } from '../../firebase/firebase.utils'
 class SignIn extends React.Component{
     constructor(props){
         super(props);
@@ -13,10 +13,17 @@ class SignIn extends React.Component{
         }
     }
 
-    handleSubmit = event =>{
+    handleSubmit = async event =>{
         event.preventDefault();
-        this.setState({email:'',password:''})
-    }
+        const{email,password} = this.state;
+        try{
+            await auth.signInWithEmailAndPassword(email,password);
+            this.setState({email:'',password:''})
+        }catch(error){
+           console.log(error);
+        }
+        
+    };
     handleChange = event =>{
         const {value,name} = event.target; //event.target可以捕获事件触发的节点，也就是可以返回用户输入的值
         this.setState({[name]:value})//然后把值赋给state
@@ -32,7 +39,7 @@ class SignIn extends React.Component{
                 <form onSubmit={this.handleSubmit}>     
                     <FormInput name="email" type="email" value={this.state.email} label="email" handleChange={this.handleChange} required />
                     
-                    <FormInput name="password" type="password" value={this.state.email} label="password" handleChange={this.handleChange} required />
+                    <FormInput name="password" type="password" value={this.state.password} label="password" handleChange={this.handleChange} required />
                     <div className='buttons'>
                         <CustomButton type="submit" >Sign in</CustomButton>
                         <CustomButton onClick={SignInWithGoogle} isGoogleSignIn>Sign in with Google</CustomButton>
