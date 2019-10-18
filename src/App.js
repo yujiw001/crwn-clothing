@@ -1,12 +1,15 @@
 import React from 'react';
 import { Switch,Route } from 'react-router-dom';
 import './App.css';
-
+import{connect} from 'react-redux';
 import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component.jsx';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component.jsx';
 import Header from './components/header/header.component.jsx';
 import {auth, createUserProfileDocument} from './firebase/firebase.utils';
+import { fromEventPattern } from 'rxjs';
+import { dispatch } from 'rxjs/internal/observable/pairs';
+import { setCurrentUser } from './redux/user/user.actions';
 const HatsPage = () => (
   <div>
     <h1>HATS PAGE</h1>
@@ -14,14 +17,15 @@ const HatsPage = () => (
 );
 
 class App extends React.Component {
-  constructor(){
-    super();
-    this.state= {
-      currentUser:null
-    }
-  }
+  // constructor(){
+  //   super();
+  //   this.state= {
+  //     currentUser:null
+  //   }
+  // }
   unsubscribeFromAuth = null;
   componentDidMount(){
+    const {setCurrentUser} = this.props;
     this.unsubscribeFromAuth=auth.onAuthStateChanged(async userAuth => {
       // createUserProfileDocument(user);
       // this.setState({currentUser:user});
@@ -34,24 +38,33 @@ class App extends React.Component {
         const userRef = await createUserProfileDocument(userAuth);
         //onSnapshot will listen to this userRef for any change to that data, but we will also get the first state of that data
         userRef.onSnapshot(snapShot => {
-          this.setState({
-            currentUser: {
-              id: snapShot.id,
-              ...snapShot.data()
-            }
-          },
-          );
+          setCurrentUser({
+            id: snapShot.id,
+            ...snapShot.data()
+          });
+          // this.props.setCurrentUser({
+          //   id: snapShot.id,
+          //   ...snapShot.data()
+          // });
+          // this.setState({
+          //   currentUser: {
+          //     id: snapShot.id,
+          //     ...snapShot.data()
+          //   }
+          // });
           console.log(this.state);
         });
       }
       //else, set the currentUser null
       //once the user sign out. set the currentUser to NULL
-      this.setState({currentUser:userAuth});
+      // this.setState({currentUser:userAuth});
+      setCurrentUser(userAuth);
     });
   }
   render() {
     return (<div>
-      <Header currentUser={this.state.currentUser}/>
+      {/* <Header currentUser={this.state.currentUser} /> */}
+      <Header />
       <Switch>
         <Route exact path='/' component={HomePage} />
         <Route exact path='/hats' component={HatsPage} />
@@ -62,5 +75,7 @@ class App extends React.Component {
     );
   }
 }
-
-export default App;
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user))
+});
+export default connect(null,mapDispatchToProps)(App);
