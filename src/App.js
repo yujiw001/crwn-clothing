@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch,Route } from 'react-router-dom';
+import { Switch,Route,Redirect } from 'react-router-dom';
 import './App.css';
 import{connect} from 'react-redux';
 import HomePage from './pages/homepage/homepage.component';
@@ -69,13 +69,19 @@ class App extends React.Component {
         <Route exact path='/' component={HomePage} />
         <Route exact path='/hats' component={HatsPage} />
         <Route exact path='/shop' component={ShopPage}/>
-        <Route exact path='/signIn' component={SignInAndSignUpPage}/>
+        {/* <Route exact path='/signIn' component={SignInAndSignUpPage}/> */}
+        <Route exact path='/signIn' render={()=>this.props.currentUser? (<Redirect to='/'/>):(<SignInAndSignUpPage />)}/>
       </Switch>
     </div>
     );
   }
 }
+//重要点，这个mapStateToProps的作用是帮我们取到reducer之中的state供我们使用
+const mapStateToProps =({user})=> ({
+  currentUser:user.currentUser
+});
+
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user))
 });
-export default connect(null,mapDispatchToProps)(App);
+export default connect(mapStateToProps,mapDispatchToProps)(App);
