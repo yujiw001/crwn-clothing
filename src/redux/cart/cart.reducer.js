@@ -1,4 +1,5 @@
 import CartActionTypes from './cart.types';
+import {addItemToCart} from './cart.utils';
 //这边的reducer来具体处理cart可能会发生的行为
 //首先先设定两个默认变量， 最开始的时候默认是hidden的，然后购物车列表为空
 const INITIAL_STATE ={
@@ -18,7 +19,8 @@ const cartReducer = (state = INITIAL_STATE, action) => {
         case CartActionTypes.ADD_ITEM:
             return {
                 ...state,
-                cartItems: [...state.cartItems,action.payload]
+                //cartItems: [...state.cartItems,action.payload]
+                cartItems: addItemToCart(state.cartItems,action.payload)
             };
         default:
             return state;
