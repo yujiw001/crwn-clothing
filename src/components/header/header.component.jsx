@@ -37,6 +37,8 @@ const Header = ({currentUser,hidden}) => (
 // const mapStateToProps = state => ({
 //     currentUser: state.user.currentUser
 // });
+//hidden的值是哪里来的？是通过mapStateToProps从reducer中把state的值取下来
+//上方currentuser的值是通过mapStateToProps从store中把值取下来去用
 const mapStateToProps = ({user:{currentUser},cart:{hidden}}) => ({
     currentUser,
     hidden
