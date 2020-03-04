@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch,Route,Redirect } from 'react-router-dom';
 import './App.css';
 import{connect} from 'react-redux';
+import {createStructuredSelector} from 'reselect'
 import HomePage from './pages/homepage/homepage.component';
 import ShopPage from './pages/shop/shop.component.jsx';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component.jsx';
@@ -9,7 +10,9 @@ import Header from './components/header/header.component.jsx';
 import {auth, createUserProfileDocument} from './firebase/firebase.utils';
 import { fromEventPattern } from 'rxjs';
 import { dispatch } from 'rxjs/internal/observable/pairs';
+import CheckoutPage from './pages/checkout/checkout.component'
 import { setCurrentUser } from './redux/user/user.actions';
+import {selectCurrentUser} from './redux/user/user.selectors';
 const HatsPage = () => (
   <div>
     <h1>HATS PAGE</h1>
@@ -69,6 +72,7 @@ class App extends React.Component {
         <Route exact path='/' component={HomePage} />
         <Route exact path='/hats' component={HatsPage} />
         <Route exact path='/shop' component={ShopPage}/>
+        <Route exact path='/checkout' component={CheckoutPage}/>
         {/* <Route exact path='/signIn' component={SignInAndSignUpPage}/> */}
         <Route exact path='/signIn' render={()=>this.props.currentUser? (<Redirect to='/'/>):(<SignInAndSignUpPage />)}/>
       </Switch>
@@ -77,10 +81,12 @@ class App extends React.Component {
   }
 }
 //重要点，这个mapStateToProps的作用是帮我们取到reducer之中的state供我们使用
-const mapStateToProps =({user})=> ({
-  currentUser:user.currentUser
+// const mapStateToProps =({user})=> ({
+//   currentUser:user.currentUser
+// });
+const mapStateToProps =createStructuredSelector ({
+  currentUser:selectCurrentUser
 });
-
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user))
 });
