@@ -31,6 +31,6 @@ const CartDropdown = ({cartItems,history}) => (
 //     cartItems: selectCartItems(state)
 // });
 const mapStateToProps = createStructuredSelector({
-    cartItems: selectCartItems
+    cartItems: selectCartItems,
 });
 export default withRouter(connect(mapStateToProps)(CartDropdown));
